@@ -1,5 +1,6 @@
 package com.tictactoe.tic_tac_toe.controller;
 
+import com.tictactoe.tic_tac_toe.exception.TicTacToeException;
 import com.tictactoe.tic_tac_toe.model.Game;
 import com.tictactoe.tic_tac_toe.model.MoveRequest;
 import com.tictactoe.tic_tac_toe.service.GameService;
@@ -31,16 +32,13 @@ public class GameController {
     }
 
     @PostMapping("/makeMove")
-    public ResponseEntity<Object> makeMove(@RequestBody MoveRequest moveRequest)
-    {
+    public ResponseEntity<Object> makeMove(@RequestBody MoveRequest moveRequest) {
         try {
             Game game= gameService.makeMove(moveRequest.getRow(), moveRequest.getCol());
             return ResponseEntity.ok(game);
         } catch (Exception e) {
             getGame();
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Illegal Move for Player");
+            throw new TicTacToeException(e.getMessage());
         }
     }
 
