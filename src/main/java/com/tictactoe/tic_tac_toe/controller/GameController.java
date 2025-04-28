@@ -3,6 +3,9 @@ package com.tictactoe.tic_tac_toe.controller;
 import com.tictactoe.tic_tac_toe.model.Game;
 import com.tictactoe.tic_tac_toe.model.MoveRequest;
 import com.tictactoe.tic_tac_toe.service.GameService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,9 +31,17 @@ public class GameController {
     }
 
     @PostMapping("/makeMove")
-    public  Game makeMove(@RequestBody MoveRequest moveRequest)
+    public ResponseEntity<Object> makeMove(@RequestBody MoveRequest moveRequest)
     {
-        return gameService.makeMove(moveRequest.getRow(),moveRequest.getCol());
+        try {
+            Game game= gameService.makeMove(moveRequest.getRow(), moveRequest.getCol());
+            return ResponseEntity.ok(game);
+        } catch (Exception e) {
+            getGame();
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Illegal Move for Player");
+        }
     }
 
 }
